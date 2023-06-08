@@ -47,6 +47,12 @@
             text-align: center;
             margin-top: 30px;
         }
+
+        p.error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -56,13 +62,20 @@
     <form method="post" action="{% url 'word_count' %}">
         {% csrf_token %}
         <label for="input-text">Enter text:</label><br>
-        <textarea id="input-text" name="text" placeholder="Type your text here" required></textarea><br>
+        <!--Alternatively we can put required here but I wanted to show errors-->
+        <textarea id="input-text" name="text" placeholder="Enter your text"></textarea><br>
         <input type="submit" value="Count Words">
+        {% if form.errors %}
+        <p class="error-message">{{ form.text.errors.as_text }}</p>
+        {% endif %}
     </form>
 
     {% if word_count %}
     <h2>Word Count: {{ word_count }}</h2>
     {% endif %}
 </body>
+
+</html>
+
 
 </html>
