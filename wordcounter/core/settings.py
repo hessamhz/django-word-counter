@@ -12,27 +12,37 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from dotenv import dotenv_values
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+######### .ENV CONFIGURATION
+# .env file path
+env_path = ".env"
+
+config = dotenv_values(env_path)
+######### END .ENV CONFIGURATION
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-(j*yjd2wigv5bgzxa7kg@ea&lm&h&r&!nurs^551rxao+2v%_j"
-)
+SECRET_KEY = config.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get("DEBUG") == "True"
+TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config.get("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
 
-INSTALLED_APPS = [
+# Django base apps
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,6 +50,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+
+# Third party apps
+THIRD_PARTY_APPS = []
+
+# Local apps
+LOCAL_APPS = [
+    "counter",
+]
+
+# Cleaning the apps
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,7 +78,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / config.get("TEMPLATE_DIR")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -105,9 +127,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+TIME_ZONE = config.get("TIME_ZONE")
 
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = config.get("LANGUAGE_CODE")
 
 USE_I18N = True
 
@@ -123,3 +145,6 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Site Name
+SITE_NAME = config.get("SITE_NAME")
